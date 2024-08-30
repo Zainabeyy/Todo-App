@@ -1,0 +1,63 @@
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans text-base dark:bg-green-dark;
+  }
+  .backgroundImg {
+    @apply w-full
+     h-52 
+     absolute
+     left-0 top-0 z-0
+     bg-[url('../../public/light-theme-bg.png')]
+     dark:bg-[url('../../public/dark-theme-image.jpg')]
+     dark:bg-cover
+     bg-no-repeat
+     bg-center;
+  }
+  .todolistBox {
+    @apply w-full min-h-12
+     p-4 border-b-1 
+     text-slate-800 text-sm 
+     bg-white-000 
+     flex items-center 
+     dark:bg-green-light dark:border-green-dark dark:text-white-100;
+  }
+  .circle {
+    @apply w-5 h-5 bg-transparent block border-2 border-slate-300 rounded-xl mr-4;
+  }
+  .circle:checked .circle:before{
+    content:''
+  }
+  .circle:checked {
+    @apply bg-lime-600
+    border-0 bg-[url('../public/icon-check.svg')] 
+    bg-no-repeat 
+    bg-center
+    bg-[length:1.2rem];
+  }
+  .circle:checked ~ label.cut {
+    @apply line-through text-slate-400 dark:text-green-lighter;
+  }
+  input[type="radio"]:checked + label {
+    @apply text-lime-600 dark:text-yellow-300;
+  }
+  input[type="radio"]:hover + label {
+    @apply text-slate-700 dark:text-green-dark;
+  }
+  @screen md {
+    .backgroundImg {
+      @apply bg-cover bg-center h-80;
+    }
+    .todolistBox {
+      @apply min-h-20 py-5 text-xl;
+    }
+    .circle {
+      @apply w-6 h-6 bg-transparent block border-2 border-slate-300 rounded-xl;
+    }
+  }
+}
