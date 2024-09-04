@@ -1,5 +1,7 @@
 import React from "react";
 import TodoList from "./components/TodoList";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "./firebase.config";
 
 type darkMode = {
   toggleTheme: () => void;
@@ -9,7 +11,7 @@ type darkMode = {
 function App(props: darkMode) {
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
   const [todo, setTodo] = React.useState("");
-  const [todoItem, setTodoItem] = React.useState(todo);
+  const dbRef=collection(db,'todo')
 
   // adjusting height of textarea
 
@@ -29,9 +31,23 @@ function App(props: darkMode) {
   function makeTodo(event: React.ChangeEvent<HTMLTextAreaElement>) {
     setTodo(event.target.value);
   }
+
+  async function submitData() {
+    try{
+      await addDoc(dbRef,{
+        text:todo,
+        completed:false,
+      })
+    }
+    catch(error){
+      alert('failed to send data')
+      console.error("error:" , error);
+    }
+  }
+
   function submitTodoList(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setTodoItem(todo);
+    submitData();
     setTodo("");
   }
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -84,7 +100,7 @@ function App(props: darkMode) {
             ></textarea>
           </div>
         </form>
-        <TodoList todoItem={todoItem} />
+        <TodoList />
         <p className="text-sm text-slate-500 text-center mt-3 md:text-lg dark:text-white-000">
           Drag and drop to reorder list
         </p>

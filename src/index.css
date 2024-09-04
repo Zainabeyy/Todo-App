@@ -13,8 +13,8 @@
      h-52 
      absolute
      left-0 top-0 z-0
-     bg-[url('../../public/light-theme-bg.png')]
-     dark:bg-[url('../../public/dark-theme-image.jpg')]
+     bg-[url('../../light-theme-bg.png')]
+     dark:bg-[url('../../dark-theme-image.jpg')]
      dark:bg-cover
      bg-no-repeat
      bg-center;
@@ -35,7 +35,7 @@
   }
   .circle:checked {
     @apply bg-lime-600
-    border-0 bg-[url('../public/icon-check.svg')] 
+    border-0 bg-[url('../icon-check.svg')] 
     bg-no-repeat 
     bg-center
     bg-[length:1.2rem];
