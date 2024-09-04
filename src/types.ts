@@ -12,4 +12,5 @@ export type TodoProp = {
     handleChange: (
       id: string
     ) => (event: React.ChangeEvent<HTMLInputElement>) => void;
+    removeItem:(id:string) => void
   };

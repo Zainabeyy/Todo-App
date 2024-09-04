@@ -1,3 +1,4 @@
+import React from "react";
 import { TodoProp } from "../types";
 
 export default function TodoListItems(props: TodoProp) {
@@ -21,7 +22,11 @@ export default function TodoListItems(props: TodoProp) {
         >
           {item.text}
         </label>
-        <button type="button" className="flex-shrink-0">
+        <button
+          type="button"
+          className="flex-shrink-0"
+          onClick={() => props.removeItem(item.id)}
+        >
           <img
             src="../../icon-cross.svg"
             alt="delete button"

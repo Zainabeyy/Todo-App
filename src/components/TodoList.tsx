@@ -3,9 +3,11 @@ import { db } from "../firebase.config";
 import React from "react";
 import {
   collection,
+  deleteDoc,
   doc,
   onSnapshot,
   updateDoc,
+  writeBatch,
 } from "firebase/firestore";
 import { Todo } from "../types";
 
@@ -76,13 +78,52 @@ export default function TodoList() {
 
   const n = todoList.filter((item) => !item.completed).length;
 
+  // removing completed item from list
+
+  async function removeItem(id: string) {
+    const deleteItemRef = doc(db, "todo", id);
+    try {
+      await deleteDoc(deleteItemRef);
+    } catch (error) {
+      alert("can not deleted data, Try again.");
+      console.log("error", error);
+    }
+  }
+
+  // deleting all completed items
+
+  async function deleteItems() {
+    const batch = writeBatch(db);
+
+    todoList.forEach((todo) => {
+      if (todo.completed) {
+        const deleteItemRef = doc(db, "todo", todo.id);
+        batch.delete(deleteItemRef);
+      }
+    });
+
+    try {
+      await batch.commit();
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
+
   return (
     <div>
       <div className="shadow-2xl overflow-hidden rounded-lg">
-        <TodoListItems items={filteredTodoList} handleChange={handleChange} />
+        <TodoListItems
+          items={filteredTodoList}
+          handleChange={handleChange}
+          removeItem={removeItem}
+        />
         <div className="flex justify-between p-4 text-slate-500 text-sm md:text-lg dark:text-green-lighter dark:bg-green-light todolistBox">
           <p>{n} items left</p>
-          <button type="button" className="cursor-pointer hover:text-slate-800">
+          <button
+            type="button"
+            className="cursor-pointer hover:text-slate-800"
+            onClick={deleteItems}
+          >
             clear completed
           </button>
         </div>
