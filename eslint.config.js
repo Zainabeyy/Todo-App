@@ -10,4 +10,7 @@ export default [
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
+  {
+    "extends": ["react-app", "react-app/jest"]
+  }  
 ];

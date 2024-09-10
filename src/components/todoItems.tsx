@@ -1,43 +1,34 @@
-import React from "react";
-import { TodoProp } from "../types";
+import { TodoArrayProp } from "../types";
+import { closestCorners, DndContext } from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import Task from "./item";
 
-export default function TodoListItems(props: TodoProp) {
-
-  // mapping over the todo list array
-
-  const todoListElement = props.items.map((item) => {
-    return (
-      <div className="todolistBox text-sm" key={item.id}>
-        <input
-          type="checkbox"
-          id={item.id}
-          onChange={props.handleChange(item.id)}
-          checked={Boolean(item.completed)}
-          name="checkList"
-          className="cursor-pointer appearance-none circle flex-shrink-0"
-        />
-        <label
-          htmlFor={item.id}
-          className="cut text-lg flex-grow cursor-pointer"
-        >
-          {item.text}
-        </label>
-        <button
-          type="button"
-          className="flex-shrink-0"
-          onClick={() => props.removeItem(item.id)}
-        >
-          <img
-            src="../../icon-cross.svg"
-            alt="delete button"
-            className="w-5 h-5"
-          />
-        </button>
-      </div>
-    );
-  });
-
+export default function TodoListItems(props: TodoArrayProp) {
   // rendring the element on screen
-
-  return <ul className="h-full">{todoListElement}</ul>;
+  const itemsEl = props.items.map((item) => (
+    <Task
+      item={item}
+      removeItem={props.removeItem}
+      handleChange={props.handleChange}
+      key={item.id}
+    />
+  ));
+  return (
+    <DndContext
+      collisionDetection={closestCorners}
+      onDragEnd={props.handleDragEnd}
+    >
+      <div className="h-full">
+        <SortableContext
+          items={props.items}
+          strategy={verticalListSortingStrategy}
+        >
+          {itemsEl}
+        </SortableContext>
+      </div>
+    </DndContext>
+  );
 }

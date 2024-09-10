@@ -1,7 +1,8 @@
 import React from "react";
 import TodoList from "./components/TodoList";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "./firebase.config";
+import { Todo } from "./types";
 
 type darkMode = {
   toggleTheme: () => void;
@@ -9,9 +10,37 @@ type darkMode = {
 };
 
 function App(props: darkMode) {
+  const [todoList, setTodoList] = React.useState<Todo[]>([]);
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
-  const [todo, setTodo] = React.useState("");
-  const dbRef=collection(db,'todo')
+  const [todo, setTodo] = React.useState<string>("");
+  const dbRef = collection(db, "todo");
+
+    // reading data from firestore
+
+    const q = query(dbRef, orderBy("order"));
+  
+    React.useEffect(() => {
+      const fetchingData = onSnapshot(
+        q,
+        (querySnapshot) => {
+          const todoData: Todo[] = querySnapshot.docs.map((doc) => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              text: data.text,
+              completed: data.completed,
+              order: data.order,
+            };
+          });
+          setTodoList(todoData);
+        },
+        (error) => {
+          console.log("Error fetching data:", error);
+        }
+      );
+  
+      return () => fetchingData();
+    }, []);
 
   // adjusting height of textarea
 
@@ -33,15 +62,15 @@ function App(props: darkMode) {
   }
 
   async function submitData() {
-    try{
-      await addDoc(dbRef,{
-        text:todo,
-        completed:false,
-      })
-    }
-    catch(error){
-      alert('failed to send data')
-      console.error("error:" , error);
+    try {
+      await addDoc(dbRef, {
+        text: todo,
+        completed: false,
+        order:todoList.length
+      });
+    } catch (error) {
+      alert("failed to send data");
+      console.error("error:", error);
     }
   }
 
@@ -100,9 +129,14 @@ function App(props: darkMode) {
             ></textarea>
           </div>
         </form>
-        <TodoList />
+        <TodoList todoList={todoList} setTodoList={setTodoList}/>
         <p className="text-sm text-slate-500 text-center mt-3 md:text-lg dark:text-white-000">
-          Drag and drop to reorder list
+          Drag and drop to reorder list using
+          <img
+            src="../drag_indicator.svg"
+            alt="drag-indicator"
+            className="inline-block"
+          ></img>
         </p>
       </div>
     </div>
