@@ -13,9 +13,9 @@ export default {
           100: "hsl(0, 0%, 98%)",
         },
         green: {
-          dark: "#1B4242",
-          light:"#5C8374",
-          lighter:'#9EC8B9'
+          dark: "#141819",
+          light:"#1a422f",
+          lighter:'#cdcdcd'
         },
       },
       fontSize: {

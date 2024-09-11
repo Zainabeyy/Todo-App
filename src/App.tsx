@@ -11,6 +11,7 @@ type darkMode = {
 
 function App(props: darkMode) {
   const [todoList, setTodoList] = React.useState<Todo[]>([]);
+  const [loading,setLoading]=React.useState<Boolean>(false);
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
   const [todo, setTodo] = React.useState<string>("");
   const dbRef = collection(db, "todo");
@@ -20,6 +21,7 @@ function App(props: darkMode) {
     const q = query(dbRef, orderBy("order"));
   
     React.useEffect(() => {
+      setLoading(true);
       const fetchingData = onSnapshot(
         q,
         (querySnapshot) => {
@@ -33,6 +35,7 @@ function App(props: darkMode) {
             };
           });
           setTodoList(todoData);
+          setLoading(false);
         },
         (error) => {
           console.log("Error fetching data:", error);
@@ -89,12 +92,20 @@ function App(props: darkMode) {
     }
   }
 
-  return (
+
+  if(loading) return (
+    <div className="max-w-[100vw] min-h-lvh flex items-center justify-center dark:bg-green-dark">
+      <div>
+        <img src={`../${props.darkmode ? 'plant' : 'totoro'}.gif`} alt="loading icon" className="max-w-48" />
+        </div>
+    </div>
+  )
+  else return (
     <div className="px-6 py-12 max-w-2xl m-auto">
       <div className="backgroundImg"></div>
       <div className="relative z-5">
         <div className="flex justify-between">
-          <h1 className="text-4xl uppercase font-semibold text-slate-700 dark:text-white md:text-6xl">
+          <h1 className="text-4xl uppercase font-semibold text-slate-700 dark:text-white-000 md:text-6xl">
             todo
           </h1>
           <label htmlFor="darkMode" className="cursor-pointer">
@@ -130,7 +141,7 @@ function App(props: darkMode) {
           </div>
         </form>
         <TodoList todoList={todoList} setTodoList={setTodoList}/>
-        <p className="text-sm text-slate-500 text-center mt-3 md:text-lg dark:text-white-000">
+        <p className="text-[0.8rem] text-slate-500 text-center mt-3 md:text-lg dark:text-white-000">
           Drag and drop to reorder list using
           <img
             src="../drag_indicator.svg"

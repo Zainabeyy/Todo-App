@@ -126,7 +126,7 @@ export default function TodoList({todoList,setTodoList}:TodoUseState) {
           <p>{n} items left</p>
           <button
             type="button"
-            className="cursor-pointer hover:text-slate-800"
+            className="cursor-pointer hover:text-slate-800 sm:text-base text-sm"
             onClick={deleteItems}
           >
             clear completed
@@ -144,7 +144,7 @@ export default function TodoList({todoList,setTodoList}:TodoUseState) {
             value="all"
             checked={state === "all"}
           />
-          <label htmlFor="all" className="cursor-pointer">
+          <label htmlFor="all" className="radioLabel">
             All
           </label>
         </div>
@@ -158,7 +158,7 @@ export default function TodoList({todoList,setTodoList}:TodoUseState) {
             value="active"
             checked={state === "active"}
           />
-          <label htmlFor="active" className="cursor-pointer">
+          <label htmlFor="active" className="radioLabel">
             Active
           </label>
         </div>
@@ -172,7 +172,7 @@ export default function TodoList({todoList,setTodoList}:TodoUseState) {
             value="completed"
             checked={state === "completed"}
           />
-          <label htmlFor="completed" className="cursor-pointer">
+          <label htmlFor="completed" className="radioLabel">
             Completed
           </label>
         </div>

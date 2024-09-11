@@ -1,7 +1,8 @@
 import { TodoArrayProp } from "../types";
-import { closestCorners, DndContext } from "@dnd-kit/core";
+import { closestCorners, DndContext, KeyboardSensor, PointerSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import {
   SortableContext,
+  sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import Task from "./item";
@@ -16,10 +17,18 @@ export default function TodoListItems(props: TodoArrayProp) {
       key={item.id}
     />
   ));
+  const sensor=useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor),
+    useSensor(KeyboardSensor,{
+      coordinateGetter: sortableKeyboardCoordinates
+    })
+  )
   return (
     <DndContext
       collisionDetection={closestCorners}
       onDragEnd={props.handleDragEnd}
+      sensors={sensor}
     >
       <div className="h-full">
         <SortableContext
