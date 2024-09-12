@@ -22,9 +22,9 @@ export default function Task({ item, removeItem, handleChange }: TodoProp) {
         {...listeners}
         type="button"
         aria-label="Drag to reorder item"
-        className="sm:mr-2 mr-1 sm:w-7 h-auto w-5 cursor-grab select-none touch-none"
+        className="sm:w-10 h-auto w-8 cursor-grab select-none touch-none"
       >
-        <img src="../../drag_indicator.svg" alt="drag-indicator" className="sm:w-8 h-auto w-7"/>
+        <img src="../../drag_indicator.svg" alt="drag-indicator" className="sm:w-10 h-auto w-8 p-[0.4rem]"/>
       </button>
       <input
         type="checkbox"
