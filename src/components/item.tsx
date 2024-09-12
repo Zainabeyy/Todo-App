@@ -18,7 +18,7 @@ export default function Task({ item, removeItem, handleChange }: TodoProp) {
       ref={setNodeRef}
       style={style}
     >
-      <button {...listeners} type="button" className="sm:mr-2 mr-1 sm:w-7 h-auto w-5 cursor-grab">
+      <button {...listeners} type="button" className="sm:mr-2 mr-1 sm:w-7 h-auto w-5 cursor-grab select-none touch-none">
         <img src="../../drag_indicator.svg" alt="drag-indicator"></img>
       </button>
       <input

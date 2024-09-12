@@ -19,7 +19,12 @@ export default function TodoListItems(props: TodoArrayProp) {
   ));
   const sensors=useSensors(
     useSensor(PointerSensor),
-    useSensor(TouchSensor),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250, // 250ms delay for touch
+        tolerance: 5,  // 10px movement tolerance before activation
+      },
+    }),
     useSensor(KeyboardSensor,{
       coordinateGetter: sortableKeyboardCoordinates
     })
