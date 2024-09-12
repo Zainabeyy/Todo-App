@@ -120,6 +120,7 @@ function App(props: darkMode) {
             />
             <img
               src={props.darkmode ? "icon-sun.svg" : "icon-moon.svg"}
+              className="w-auto h-auto"
               alt="toggle Theme button"
             />
           </label>

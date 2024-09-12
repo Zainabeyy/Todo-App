@@ -126,14 +126,14 @@ export default function TodoList({todoList,setTodoList}:TodoUseState) {
           <p>{n} items left</p>
           <button
             type="button"
-            className="cursor-pointer hover:text-slate-800 sm:text-base text-sm"
+            className="cursor-pointer hover:text-slate-900 hover:dark:text-slate-400 hover:font-medium sm:text-base text-sm"
             onClick={deleteItems}
           >
             clear completed
           </button>
         </div>
       </div>
-      <div className="todolistBox shadow-xl my-4 flex justify-evenly font-bold text-slate-400 md:text-lg dark:text-white-000 rounded-md">
+      <div className="todolistBox shadow-xl my-4 flex justify-evenly font-bold text-slate-600 md:text-lg dark:text-white-000 rounded-md">
         <div>
           <input
             type="radio"
