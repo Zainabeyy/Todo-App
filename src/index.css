@@ -13,8 +13,8 @@
      h-52 
      absolute
      left-0 top-0 z-0
-     bg-[url('../../light-theme-bg.png')]
-     dark:bg-[url('../../totoro-dark-theme.jpg')]
+     bg-[url('../../_header/light-theme-bg.webp')]
+     dark:bg-[url('../../_header/totoro-dark-theme.webp')]
      bg-cover
      bg-no-repeat
      bg-center
@@ -35,7 +35,7 @@
     content: "";
   }
   .circle:checked {
-    @apply bg-[url('../light-gradient-check.png')] dark:bg-[url('../dark-gradient-check.png')]
+    @apply bg-[url('../blue-gradient-check.webp')] dark:bg-[url('../yellow-gradient-check.webp')]
     bg-no-repeat
     bg-contain
     bg-center

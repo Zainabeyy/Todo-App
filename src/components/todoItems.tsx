@@ -17,7 +17,7 @@ export default function TodoListItems(props: TodoArrayProp) {
       key={item.id}
     />
   ));
-  const sensor=useSensors(
+  const sensors=useSensors(
     useSensor(PointerSensor),
     useSensor(TouchSensor),
     useSensor(KeyboardSensor,{
@@ -28,7 +28,7 @@ export default function TodoListItems(props: TodoArrayProp) {
     <DndContext
       collisionDetection={closestCorners}
       onDragEnd={props.handleDragEnd}
-      sensors={sensor}
+      sensors={sensors}
     >
       <div className="h-full">
         <SortableContext
