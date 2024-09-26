@@ -1,21 +1,15 @@
 import TodoListItems from "./todoItems";
-import { db } from "../firebase.config";
 import React from "react";
-import {
-  deleteDoc,
-  doc,
-  updateDoc,
-  writeBatch,
-} from "firebase/firestore";
 import { Todo, TodoUseState } from "../types";
 import { DragEndEvent, UniqueIdentifier } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 
 export default function TodoList({todoList,setTodoList}:TodoUseState) {
-  // const [todoList, setTodoList] = React.useState<Todo[]>([]);
   const [state, setState] = React.useState("all");
 
-
+  React.useEffect(()=>{
+    localStorage.setItem('taskArray',JSON.stringify(todoList))
+  },[todoList])
 
   // changing the value of completed
 
@@ -26,14 +20,6 @@ export default function TodoList({todoList,setTodoList}:TodoUseState) {
       );
       setTodoList(updatedTodo);
 
-      // Update the completed status in Firestore
-
-      const todoDocRef = doc(db, "todo", id);
-      try {
-        await updateDoc(todoDocRef, { completed: event.target.checked });
-      } catch (error) {
-        console.log("Error updating document:", error);
-      }
     };
 
   // changing the value of radio (all,active,completed)
@@ -57,32 +43,13 @@ export default function TodoList({todoList,setTodoList}:TodoUseState) {
   // removing completed item from list
 
   async function removeItem(id: string) {
-    const deleteItemRef = doc(db, "todo", id);
-    try {
-      await deleteDoc(deleteItemRef);
-    } catch (error) {
-      alert("can not deleted data, Try again.");
-      console.log("error", error);
-    }
+   setTodoList(prev => prev.filter((item => item.id!== id)))
   }
 
   // deleting all completed items
 
   async function deleteItems() {
-    const batch = writeBatch(db);
-
-    todoList.forEach((todo) => {
-      if (todo.completed) {
-        const deleteItemRef = doc(db, "todo", todo.id);
-        batch.delete(deleteItemRef);
-      }
-    });
-
-    try {
-      await batch.commit();
-    } catch (error) {
-      console.log("error", error);
-    }
+    setTodoList(prev => prev.filter(item => item.completed !== true))
   }
 
   // changing list on drag and drop
@@ -98,17 +65,7 @@ export default function TodoList({todoList,setTodoList}:TodoUseState) {
       const orginalPos = getTask(active.id);
       const newPos = getTask(over.id);
       const newList = arrayMove(item, orginalPos, newPos);
-      // Update the order in Firestore using a batch
-      const batch = writeBatch(db);
-      newList.forEach((item, index) => {
-        const todoDocRef = doc(db, "todo", item.id);
-        batch.update(todoDocRef, { order: index });
-      });
-
-      // Commit the batch
-      batch.commit().catch((error) => {
-        console.error("Error updating order in Firestore", error);
-      });
+      localStorage.setItem('taskArray',JSON.stringify(newList))
       return newList;
     });
   }

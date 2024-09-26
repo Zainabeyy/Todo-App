@@ -1,158 +1,33 @@
 import React from "react";
-import TodoList from "./components/TodoList";
-import { addDoc, collection, onSnapshot, orderBy, query } from "firebase/firestore";
-import { db } from "./firebase.config";
-import { Todo } from "./types";
+import Home from "./pages/home";
 
-type darkMode = {
-  toggleTheme: () => void;
-  darkmode: boolean;
-};
+export default function App() {
+  const [darkMode, setDarkMode] = React.useState(false);
 
-function App(props: darkMode) {
-  const [todoList, setTodoList] = React.useState<Todo[]>([]);
-  const [loading,setLoading]=React.useState<Boolean>(false);
-  const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
-  const [todo, setTodo] = React.useState<string>("");
-  const dbRef = collection(db, "todo");
+  // toggling the dark mode in localStorage and in file 
 
-    // reading data from firestore
-
-    const q = query(dbRef, orderBy("order"));
-  
-    React.useEffect(() => {
-      setLoading(true);
-      const fetchingData = onSnapshot(
-        q,
-        (querySnapshot) => {
-          const todoData: Todo[] = querySnapshot.docs.map((doc) => {
-            const data = doc.data();
-            return {
-              id: doc.id,
-              text: data.text,
-              completed: data.completed,
-              order: data.order,
-            };
-          });
-          setTodoList(todoData);
-          setLoading(false);
-        },
-        (error) => {
-          console.log("Error fetching data:", error);
-        }
-      );
-  
-      return () => fetchingData();
-    }, []);
-
-  // adjusting height of textarea
-
-  function adjustHeight() {
-    if (textareaRef.current) {
-      const textRefcurrent = textareaRef.current;
-      textRefcurrent.style.height = "auto";
-      textRefcurrent.style.height = `${textRefcurrent.scrollHeight}px`;
-    }
-  }
   React.useEffect(() => {
-    adjustHeight();
-  }, [todo]);
-
-  // creating todo item and submit it to form on enter button
-
-  function makeTodo(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    setTodo(event.target.value);
-  }
-
-  async function submitData() {
-    try {
-      await addDoc(dbRef, {
-        text: todo,
-        completed: false,
-        order:todoList.length
-      });
-    } catch (error) {
-      alert("failed to send data");
-      console.error("error:", error);
+    const localDarkMode = localStorage.getItem("darkMode");
+    if (localDarkMode !== null) {
+      setDarkMode(JSON.parse(localDarkMode));
     }
+  }, []);
+  async function toggleDarkMode() {
+    setDarkMode((prev) => {
+      const newDarkMode=!prev;
+      localStorage.setItem("darkMode", JSON.stringify(newDarkMode));
+      return newDarkMode
+    });
   }
 
-  function submitTodoList(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    submitData();
-    setTodo("");
-  }
-  function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      const form = event.currentTarget.form;
-      if (form) {
-        form.requestSubmit(); // Submit the form programmatically
-      }
+  // setting the dark theme
+
+  React.useEffect(() => {
+    if (!darkMode) {
+      document.documentElement.setAttribute("class", "light");
+    } else {
+      document.documentElement.setAttribute("class", "dark");
     }
-  }
-
-
-  if(loading) return (
-    <div className="max-w-[100vw] min-h-lvh flex items-center justify-center dark:bg-green-dark">
-      <div>
-        <img src={`../${props.darkmode ? 'plant' : 'totoro'}.gif`} alt="loading icon" className="max-w-48" />
-        </div>
-    </div>
-  )
-  else return (
-    <div className="px-6 py-12 max-w-2xl m-auto">
-      <div className="backgroundImg"></div>
-      <div className="relative z-5">
-        <div className="flex justify-between">
-          <h1 className="text-4xl uppercase font-semibold text-slate-700 dark:text-white-000 md:text-6xl">
-            todo
-          </h1>
-          <label htmlFor="darkMode" className="cursor-pointer">
-            <input
-              className="hidden"
-              type="checkbox"
-              id="darkMode"
-              name="darkMode"
-              onChange={props.toggleTheme}
-              checked={props.darkmode}
-              value={todo}
-            />
-            <img
-              src={props.darkmode ? "icon-sun.svg" : "icon-moon.svg"}
-              className="w-auto h-auto"
-              alt="toggle Theme button"
-            />
-          </label>
-        </div>
-        <form onSubmit={submitTodoList} className="mt-8 mb-4 w-full">
-          <div className="todolistBox rounded-md shadow-xl">
-            <label htmlFor="todo" className="circle"></label>
-            <textarea
-              ref={textareaRef}
-              id="todo"
-              name="todo"
-              value={todo}
-              onChange={(e) => makeTodo(e)}
-              onKeyDown={handleKeyDown}
-              rows={1}
-              className="scroll-none focus:outline-none w-full caret-emerald-700 dark:caret-emerald-950 resize-none dark:bg-green-light"
-              placeholder="Create a new todo..."
-            ></textarea>
-          </div>
-        </form>
-        <TodoList todoList={todoList} setTodoList={setTodoList}/>
-        <p className="text-[0.8rem] text-slate-500 text-center mt-3 md:text-lg dark:text-white-000">
-          Drag and drop to reorder list using
-          <img
-            src="../drag_indicator.svg"
-            alt="drag-indicator"
-            className="inline-block"
-          ></img>
-        </p>
-      </div>
-    </div>
-  );
+  }, [darkMode]);
+  return <Home toggleTheme={toggleDarkMode} darkmode={darkMode} />;
 }
-
-export default App;
