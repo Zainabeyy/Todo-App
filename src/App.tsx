@@ -4,7 +4,7 @@ import Home from "./pages/home";
 export default function App() {
   const [darkMode, setDarkMode] = React.useState(false);
 
-  // toggling the dark mode in localStorage and in file 
+  // toggling the dark mode in localStorage and in file
 
   React.useEffect(() => {
     const localDarkMode = localStorage.getItem("darkMode");
@@ -14,9 +14,9 @@ export default function App() {
   }, []);
   async function toggleDarkMode() {
     setDarkMode((prev) => {
-      const newDarkMode=!prev;
+      const newDarkMode = !prev;
       localStorage.setItem("darkMode", JSON.stringify(newDarkMode));
-      return newDarkMode
+      return newDarkMode;
     });
   }
 

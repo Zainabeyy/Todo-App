@@ -1,7 +1,6 @@
 import React from "react";
 import TodoList from "../components/TodoList";
 import { Todo } from "../types";
-import { nanoid } from "nanoid";
 
 type darkMode = {
   toggleTheme: () => void;
@@ -12,6 +11,7 @@ function Home(props: darkMode) {
   const [todoList, setTodoList] = React.useState<Todo[]>(() => {
     const savedTask = localStorage.getItem("taskArray");
     try {
+      
       return savedTask ? JSON.parse(savedTask) : [];
     } catch (e) {
       console.error("Error parsing JSON from localStorage:", e);
@@ -20,6 +20,15 @@ function Home(props: darkMode) {
   });
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
   const [todo, setTodo] = React.useState<string>("");
+
+  React.useEffect(()=>{
+    async function fetchTasks() {
+      const response=await fetch('http://localhost:8000/api/todo')
+      const todo=await response.json();
+      console.log(todo);
+    }
+    fetchTasks();
+  },[]);
 
   // creating todo item and submit it to form on enter button
 
@@ -30,7 +39,7 @@ function Home(props: darkMode) {
   async function submitData() {
     setTodoList((prev) => [
       ...prev,
-      { id: nanoid(), text: todo, completed: false, order: prev.length },
+      {text: todo, completed: false, order: prev.length },
     ]);
   }
 
