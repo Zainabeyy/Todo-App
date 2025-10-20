@@ -24,11 +24,15 @@ export default function Task({ item, removeItem, handleChange }: TodoProp) {
         aria-label="Drag to reorder item"
         className="sm:w-8 h-auto w-6 cursor-grab select-none touch-none"
       >
-        <img src="../../drag_indicator.svg" alt="drag-indicator" className="sm:w-8 h-auto w-6"/>
+        <img
+          src="../../drag_indicator.svg"
+          alt="drag-indicator"
+          className="sm:w-8 h-auto w-6"
+        />
       </button>
       <input
         type="checkbox"
-        id={item.id}
+        id={JSON.stringify(item.id)}
         onChange={handleChange(item.id)}
         checked={Boolean(item.completed)}
         disabled={false}
@@ -36,16 +40,16 @@ export default function Task({ item, removeItem, handleChange }: TodoProp) {
         className="cursor-pointer appearance-none circle flex-shrink-0"
       />
       <label
-        htmlFor={item.id}
+        htmlFor={JSON.stringify(item.id)}
         className="cut sm:text-lg text-sm flex-grow cursor-pointer"
       >
-        {item.text}
+        {item.task}
       </label>
       <button
         type="button"
         aria-label="Remove item"
         className="flex-shrink-0 sm:w-[2.2rem] w-[1.8rem] p-2"
-        onClick={() => removeItem(item.id)}
+        onClick={() => removeItem(id)}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

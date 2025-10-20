@@ -1,34 +1,33 @@
 import { TodoArrayProp } from "../types";
-import { closestCorners, DndContext, KeyboardSensor, PointerSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
+import {
+  closestCorners,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import Task from "./item";
+import Task from "./Task";
 
 export default function TodoListItems(props: TodoArrayProp) {
-  // rendring the element on screen
-  const itemsEl = props.items.map((item) => (
-    <Task
-      item={item}
-      removeItem={props.removeItem}
-      handleChange={props.handleChange}
-      key={item.id}
-    />
-  ));
-  const sensors=useSensors(
+  const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(TouchSensor, {
       activationConstraint: {
         delay: 250, // 250ms delay for touch
-        tolerance: 5,  // 10px movement tolerance before activation
+        tolerance: 5, // 10px movement tolerance before activation
       },
     }),
-    useSensor(KeyboardSensor,{
-      coordinateGetter: sortableKeyboardCoordinates
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
     })
-  )
+  );
   return (
     <DndContext
       collisionDetection={closestCorners}
@@ -40,7 +39,14 @@ export default function TodoListItems(props: TodoArrayProp) {
           items={props.items}
           strategy={verticalListSortingStrategy}
         >
-          {itemsEl}
+          {props.items.map((item) => (
+            <Task
+              item={item}
+              removeItem={props.removeItem}
+              handleChange={props.handleChange}
+              key={item.id}
+            />
+          ))}
         </SortableContext>
       </div>
     </DndContext>

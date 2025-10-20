@@ -1,56 +1,46 @@
 import React from "react";
 import TodoList from "../components/TodoList";
-import { Todo } from "../types";
+import { darkMode, Todo } from "../types";
 
-type darkMode = {
-  toggleTheme: () => void;
-  darkmode: boolean;
-};
-
-function Home(props: darkMode) {
-  const [todoList, setTodoList] = React.useState<Todo[]>(() => {
-    const savedTask = localStorage.getItem("taskArray");
-    try {
-      
-      return savedTask ? JSON.parse(savedTask) : [];
-    } catch (e) {
-      console.error("Error parsing JSON from localStorage:", e);
-      return [];
-    }
-  });
-  const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
+export default function Home(props: darkMode) {
   const [todo, setTodo] = React.useState<string>("");
+  const [todoList, setTodoList] = React.useState<Todo[]>([]);
+  const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
-  React.useEffect(()=>{
-    async function fetchTasks() {
-      const response=await fetch('http://localhost:8000/api/todo')
-      const todo=await response.json();
-      console.log(todo);
-    }
-    fetchTasks();
-  },[]);
-
-  // creating todo item and submit it to form on enter button
-
-  function makeTodo(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    setTodo(event.target.value);
-  }
-
-  async function submitData() {
-    setTodoList((prev) => [
-      ...prev,
-      {text: todo, completed: false, order: prev.length },
-    ]);
-  }
+  // fetching todo list from db
 
   React.useEffect(() => {
-    localStorage.setItem("taskArray", JSON.stringify(todoList));
-  }, [todoList]);
+    async function fetchTasks() {
+      const response = await fetch("http://localhost:8000/api/todo");
+      const todo = await response.json();
+      setTodoList(todo);
+    }
+    fetchTasks();
+  }, []);
 
-  function submitTodoList(event: React.FormEvent<HTMLFormElement>) {
+  function updateTodo(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    const newValue = event.target.value;
+    setTodo(newValue);
+  }
+
+  async function submitTodoList(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
     if (todo.trim()) {
-      submitData();
+      const response = await fetch("http://localhost:8000/api/todo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          task: todo,
+          completed: false,
+          order: todoList.length,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to add todo");
+      }
+      const newTodo = await response.json();
+      setTodoList((prev) => [...prev, newTodo]);
       setTodo("");
     }
   }
@@ -111,7 +101,7 @@ function Home(props: darkMode) {
               id="todo"
               name="todo"
               value={todo}
-              onChange={(e) => makeTodo(e)}
+              onChange={(e) => updateTodo(e)}
               onKeyDown={handleKeyDown}
               rows={1}
               className="scroll-none focus:outline-none w-full caret-emerald-700 dark:caret-emerald-950 resize-none dark:bg-green-light"
@@ -119,7 +109,9 @@ function Home(props: darkMode) {
             ></textarea>
           </div>
         </form>
+
         <TodoList todoList={todoList} setTodoList={setTodoList} />
+
         <p className="text-[0.8rem] text-slate-500 text-center mt-3 md:text-lg dark:text-white-000">
           Drag and drop to reorder list using
           <img
@@ -132,5 +124,3 @@ function Home(props: darkMode) {
     </div>
   );
 }
-
-export default Home;

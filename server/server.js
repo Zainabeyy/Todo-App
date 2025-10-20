@@ -8,6 +8,8 @@ const app = express();
 
 app.use(cors());
 
+app.use(express.json());
+
 app.use("/api/todo", todoRouter);
 
 app.listen(PORT, () => console.log(`server connected on port: ${PORT}`));

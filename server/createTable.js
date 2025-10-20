@@ -6,8 +6,8 @@ async function createTable() {
   try {
     await db.exec(`
             CREATE TABLE IF NOT EXISTS todos (
-            ID SERIAL PRIMARY KEY AUTOINCREMENT, 
-            text TEXT NOT NULL,
+            id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            task TEXT NOT NULL,
             completed BOOLEAN NOT NULL,
             "order" INTEGER NOT NULL
             )
