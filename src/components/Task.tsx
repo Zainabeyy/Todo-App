@@ -1,9 +1,11 @@
-import { TodoProp } from "../types";
+import { Todo } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useTodoList } from "../hook/useTodoList";
 
-export default function Task({ item, removeItem, handleChange }: TodoProp) {
+export default function Task({ item }: {item: Todo}) {
   const id = item.id;
+  const { deleteTask, changeCompStatus } = useTodoList();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
   const style = {
@@ -33,7 +35,7 @@ export default function Task({ item, removeItem, handleChange }: TodoProp) {
       <input
         type="checkbox"
         id={JSON.stringify(item.id)}
-        onChange={handleChange(item.id)}
+        onChange={() => changeCompStatus(item.id, item.completed)}
         checked={Boolean(item.completed)}
         disabled={false}
         name="checkList"
@@ -49,7 +51,7 @@ export default function Task({ item, removeItem, handleChange }: TodoProp) {
         type="button"
         aria-label="Remove item"
         className="flex-shrink-0 sm:w-[2.2rem] w-[1.8rem] p-2"
-        onClick={() => removeItem(id)}
+        onClick={() => deleteTask(id)}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

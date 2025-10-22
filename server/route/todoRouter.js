@@ -1,10 +1,20 @@
-import express from 'express';
-import { addTodo, deleteTask, getAllTodos } from '../controller/TodoController.js';
+import express from "express";
+import {
+  addTodo,
+  deleteTask,
+  getAllTodos,
+  deleteCompTasks,
+  changeCompStatus,
+} from "../controller/TodoController.js";
 
-export const todoRouter= express.Router();
+export const todoRouter = express.Router();
 
-todoRouter.get('/', getAllTodos);
+todoRouter.get("/", getAllTodos);
 
-todoRouter.post('/', addTodo);
+todoRouter.post("/", addTodo);
 
-todoRouter.delete('/:id', deleteTask);
+todoRouter.delete("/completed", deleteCompTasks);
+
+todoRouter.delete("/:id", deleteTask);
+
+todoRouter.put("/:id", changeCompStatus);

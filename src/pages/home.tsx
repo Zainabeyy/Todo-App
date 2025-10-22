@@ -1,22 +1,13 @@
 import React from "react";
 import TodoList from "../components/TodoList";
-import { darkMode, Todo } from "../types";
+import { useTodoList } from "../hook/useTodoList";
+import { useTheme } from "../hook/useTheme";
 
-export default function Home(props: darkMode) {
+export default function Home() {
   const [todo, setTodo] = React.useState<string>("");
-  const [todoList, setTodoList] = React.useState<Todo[]>([]);
+  const { darkMode, toggleDarkMode } = useTheme();
+  const { addTodo } = useTodoList();
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
-
-  // fetching todo list from db
-
-  React.useEffect(() => {
-    async function fetchTasks() {
-      const response = await fetch("http://localhost:8000/api/todo");
-      const todo = await response.json();
-      setTodoList(todo);
-    }
-    fetchTasks();
-  }, []);
 
   function updateTodo(event: React.ChangeEvent<HTMLTextAreaElement>) {
     const newValue = event.target.value;
@@ -27,20 +18,7 @@ export default function Home(props: darkMode) {
     event.preventDefault();
 
     if (todo.trim()) {
-      const response = await fetch("http://localhost:8000/api/todo", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          task: todo,
-          completed: false,
-          order: todoList.length,
-        }),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to add todo");
-      }
-      const newTodo = await response.json();
-      setTodoList((prev) => [...prev, newTodo]);
+      addTodo(todo);
       setTodo("");
     }
   }
@@ -82,12 +60,12 @@ export default function Home(props: darkMode) {
               type="checkbox"
               id="darkMode"
               name="darkMode"
-              onChange={props.toggleTheme}
-              checked={props.darkmode}
+              onChange={toggleDarkMode}
+              checked={darkMode}
               value={todo}
             />
             <img
-              src={props.darkmode ? "icon-sun.svg" : "icon-moon.svg"}
+              src={darkMode ? "icon-sun.svg" : "icon-moon.svg"}
               className="w-auto h-auto"
               alt="toggle Theme button"
             />
@@ -110,7 +88,7 @@ export default function Home(props: darkMode) {
           </div>
         </form>
 
-        <TodoList todoList={todoList} setTodoList={setTodoList} />
+        <TodoList />
 
         <p className="text-[0.8rem] text-slate-500 text-center mt-3 md:text-lg dark:text-white-000">
           Drag and drop to reorder list using

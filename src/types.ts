@@ -1,8 +1,16 @@
 import { DragEndEvent } from "@dnd-kit/core";
 
-export type darkMode = {
-  toggleTheme: () => void;
-  darkmode: boolean;
+export interface ThemeContextType {
+  darkMode: boolean;
+  toggleDarkMode: () => void;
+}
+
+export type TodoContextType = {
+  todoList: Todo[];
+  addTodo: (todo: string) => Promise<void>;
+  deleteTask: (id: number) => Promise<void>;
+  deleteCompTasks: () => Promise<void>;
+  changeCompStatus: (id: number, completed: boolean) => Promise<void>;
 };
 
 export type Todo = {
@@ -14,22 +22,5 @@ export type Todo = {
 
 export type TodoArrayProp = {
   items: Todo[];
-  handleChange: (
-    id: number
-  ) => (event: React.ChangeEvent<HTMLInputElement>) => void;
-  removeItem: (id: number) => void;
   handleDragEnd: (e: DragEndEvent) => void;
-};
-
-export type TodoProp = {
-  item: Todo;
-  handleChange: (
-    id: number
-  ) => (event: React.ChangeEvent<HTMLInputElement>) => void;
-  removeItem: (id: number) => void;
-};
-
-export type TodoUseState = {
-  todoList: Todo[];
-  setTodoList: React.Dispatch<React.SetStateAction<Todo[]>>;
 };

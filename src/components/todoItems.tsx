@@ -42,8 +42,6 @@ export default function TodoListItems(props: TodoArrayProp) {
           {props.items.map((item) => (
             <Task
               item={item}
-              removeItem={props.removeItem}
-              handleChange={props.handleChange}
               key={item.id}
             />
           ))}

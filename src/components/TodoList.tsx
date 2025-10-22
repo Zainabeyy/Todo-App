@@ -1,21 +1,12 @@
 import TodoListItems from "./todoItems";
 import React from "react";
-import { Todo, TodoUseState } from "../types";
 import { DragEndEvent, UniqueIdentifier } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
+import { useTodoList } from "../hook/useTodoList";
 
-export default function TodoList({ todoList, setTodoList }: TodoUseState) {
+export default function TodoList() {
   const [state, setState] = React.useState("all");
-
-  // changing the value of completed
-
-  const handleChange =
-    (id: number) => async (event: React.ChangeEvent<HTMLInputElement>) => {
-      const updatedTodo = todoList.map((item: Todo) =>
-        id === item.id ? { ...item, completed: event.target.checked } : item
-      );
-      setTodoList(updatedTodo);
-    };
+  const { todoList, deleteCompTasks } = useTodoList();
 
   // changing the value of radio (all,active,completed)
 
@@ -35,29 +26,11 @@ export default function TodoList({ todoList, setTodoList }: TodoUseState) {
 
   const n = todoList.filter((item) => !item.completed).length;
 
-  async function removeItem(id: number) {
-    const res=await fetch(`http://localhost:8000/api/todo/${id}`, {
-      method: 'DELETE'
-    })
-    if(!res.ok){
-      throw new Error('can not delete task')
-    }
-    const newTodoList=await res.json();
-    // setTodoList(newTodoList)
-    console.log(newTodoList)
-
-  }
-
-  // deleting all completed items
-
-  async function deleteItems() {
-    setTodoList((prev) => prev.filter((item) => item.completed !== true));
-  }
-
   // changing list on drag and drop
 
-  const getTask = (id: UniqueIdentifier) =>
+  function getTask(id: UniqueIdentifier) {
     todoList.findIndex((task) => task.id === id);
+  }
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -67,7 +40,6 @@ export default function TodoList({ todoList, setTodoList }: TodoUseState) {
       const orginalPos = getTask(active.id);
       const newPos = getTask(over.id);
       const newList = arrayMove(item, orginalPos, newPos);
-      localStorage.setItem("taskArray", JSON.stringify(newList));
       return newList;
     });
   }
@@ -75,20 +47,14 @@ export default function TodoList({ todoList, setTodoList }: TodoUseState) {
   return (
     <div>
       <div className="shadow-2xl overflow-hidden rounded-lg">
-
-        <TodoListItems
-          items={filteredTodoList}
-          handleChange={handleChange}
-          removeItem={removeItem}
-          handleDragEnd={handleDragEnd}
-        />
+        <TodoListItems items={filteredTodoList} handleDragEnd={handleDragEnd} />
 
         <div className="flex justify-between p-4 text-slate-500 text-sm md:text-lg dark:text-green-lighter dark:bg-green-light todolistBox">
           <p>{n} items left</p>
           <button
             type="button"
             className="cursor-pointer hover:text-slate-900 hover:dark:text-slate-400 hover:font-medium sm:text-base text-sm"
-            onClick={deleteItems}
+            onClick={deleteCompTasks}
           >
             clear completed
           </button>
