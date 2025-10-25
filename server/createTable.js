@@ -8,8 +8,8 @@ async function createTable() {
             CREATE TABLE IF NOT EXISTS todos (
             id INTEGER PRIMARY KEY AUTOINCREMENT, 
             task TEXT NOT NULL,
-            completed BOOLEAN NOT NULL,
-            "order" INTEGER NOT NULL
+            completed BOOLEAN NOT NULL DEFAULT 0,
+            position INTEGER NOT NULL UNIQUE
             )
             `);
 
@@ -24,7 +24,7 @@ async function createTable() {
 
 //   try {
 //     await db.run(`
-//             INSERT INTO todos ("text", completed, "order")
+//             INSERT INTO todos ("text", completed, position)
 //             VALUES (?,?,?)
 //             `, ['first task', true, 2]);
 
