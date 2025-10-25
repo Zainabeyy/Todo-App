@@ -6,7 +6,7 @@ import { useTodoList } from "../hook/useTodoList";
 
 export default function TodoList() {
   const [state, setState] = React.useState("all");
-  const { todoList, deleteCompTasks } = useTodoList();
+  const { todoList, setTodoList, deleteCompTasks, updatePosition } = useTodoList();
 
   // changing the value of radio (all,active,completed)
 
@@ -29,18 +29,30 @@ export default function TodoList() {
   // changing list on drag and drop
 
   function getTask(id: UniqueIdentifier) {
-    todoList.findIndex((task) => task.id === id);
+    return todoList.findIndex((task) => task.id === id);
   }
 
-  function handleDragEnd(event: DragEndEvent) {
+  async function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    setTodoList((item) => {
-      const orginalPos = getTask(active.id);
+    setTodoList((items) => {
+      const originalPos = getTask(active.id);
       const newPos = getTask(over.id);
-      const newList = arrayMove(item, orginalPos, newPos);
-      return newList;
+      const newList = arrayMove(items, originalPos, newPos);
+
+      const orderedList = newList.map((item, index) => ({
+        ...item,
+        position: index + 1,
+      }));
+
+      // Persist order to backend
+      const orderedData = orderedList.map(({ id, position }) => ({ id, position }));
+      console.log(orderedData);
+      // Call async backend update (fire and forget)
+      updatePosition(orderedData).catch(console.error);
+
+      return orderedList;
     });
   }
 

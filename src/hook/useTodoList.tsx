@@ -2,11 +2,12 @@ import { createContext, useContext, useState, ReactNode } from "react";
 import { Todo, TodoContextType } from "../types";
 import React from "react";
 
-
 const TodoContext = createContext<TodoContextType | undefined>(undefined);
 
 export const TodoProvider = ({ children }: { children: ReactNode }) => {
   const [todoList, setTodoList] = useState<Todo[]>([]);
+
+  // ---- fetch data in start -----
 
   React.useEffect(() => {
     async function fetchTasks() {
@@ -17,6 +18,8 @@ export const TodoProvider = ({ children }: { children: ReactNode }) => {
     fetchTasks();
   }, []);
 
+  // ---- add new todo -----
+
   async function addTodo(todo: string) {
     const response = await fetch("http://localhost:8000/api/todo", {
       method: "POST",
@@ -24,7 +27,7 @@ export const TodoProvider = ({ children }: { children: ReactNode }) => {
       body: JSON.stringify({
         task: todo,
         completed: 0,
-        order: todoList.length,
+        position: todoList.length,
       }),
     });
     if (!response.ok) {
@@ -34,6 +37,8 @@ export const TodoProvider = ({ children }: { children: ReactNode }) => {
     setTodoList((prev) => [...prev, newTodo]);
   }
 
+  // ---- delete task -----
+
   async function deleteTask(id: number) {
     const res = await fetch(`http://localhost:8000/api/todo/${id}`, {
       method: "DELETE",
@@ -41,9 +46,10 @@ export const TodoProvider = ({ children }: { children: ReactNode }) => {
     if (!res.ok) {
       throw new Error("can not delete task");
     }
-    const newTodoList = await res.json();
-    setTodoList(newTodoList);
+    setTodoList((prev) => prev.filter((todo) => todo.id !== id));
   }
+
+  // ---- delete completed todo -----
 
   async function deleteCompTasks() {
     const res = await fetch(`http://localhost:8000/api/todo/completed`, {
@@ -52,9 +58,10 @@ export const TodoProvider = ({ children }: { children: ReactNode }) => {
     if (!res.ok) {
       throw new Error("can not delete completed tasks");
     }
-    const newTodoList = await res.json();
-    setTodoList(newTodoList);
+    setTodoList((prev) => prev.filter((todo) => !todo.completed));
   }
+
+  // ---- change status of task -----
 
   async function changeCompStatus(id: number, completed: boolean) {
     const res = await fetch(`http://localhost:8000/api/todo/${id}`, {
@@ -65,18 +72,43 @@ export const TodoProvider = ({ children }: { children: ReactNode }) => {
     if (!res.ok) {
       throw new Error("can not Update tasks status");
     }
-    const newTodoList = await res.json();
-    setTodoList(newTodoList);
+    setTodoList((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, completed: !item.completed } : item
+      )
+    );
   }
+
+  // ---- update task position -----
+
+  async function updatePosition(
+    todo: {
+      position: number;
+      id: number;
+    }[]
+  ) {
+    const res = await fetch(`http://localhost:8000/api/todo/reorder`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(todo),
+    });
+    if (!res.ok) {
+      throw new Error("can not Update tasks status");
+    }
+  }
+
+  // ---- context provider -----
 
   return (
     <TodoContext.Provider
       value={{
         todoList,
+        setTodoList,
         addTodo,
         deleteTask,
         deleteCompTasks,
         changeCompStatus,
+        updatePosition,
       }}
     >
       {children}
