@@ -58,7 +58,7 @@ export default function TodoList() {
 
   return (
     <div>
-      <div className="shadow-2xl overflow-hidden rounded-lg">
+      <div className="equalShadow overflow-hidden rounded-lg">
         <TodoListItems items={filteredTodoList} handleDragEnd={handleDragEnd} />
 
         <div className="flex justify-between p-4 text-slate-500 text-sm md:text-lg dark:text-green-lighter dark:bg-green-light todolistBox">
@@ -72,7 +72,7 @@ export default function TodoList() {
           </button>
         </div>
       </div>
-      <div className="todolistBox shadow-xl my-4 flex justify-evenly font-bold text-slate-600 md:text-lg dark:text-white-000 rounded-md">
+      <div className="todolistBox equalShadow my-4 flex justify-evenly font-bold text-slate-600 md:text-lg dark:text-white-000 rounded-md">
         <div>
           <input
             type="radio"

@@ -1,6 +1,6 @@
 import express from "express";
-import { todoRouter } from "./route/todoRouter.js";
 import cors from "cors";
+import { todoRouter } from "./route/todoRouter";
 
 const PORT = 8000;
 
@@ -11,5 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/todo", todoRouter);
+
+app.use("/api/auth", todoRouter);
 
 app.listen(PORT, () => console.log(`server connected on port: ${PORT}`));

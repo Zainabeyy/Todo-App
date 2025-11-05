@@ -1,4 +1,4 @@
-import { getDBConnection } from "./db.js";
+import { getDBConnection } from "./db";
 
 async function createTable() {
   const db = await getDBConnection();
@@ -6,7 +6,7 @@ async function createTable() {
   try {
     await db.exec(`
             CREATE TABLE IF NOT EXISTS todos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             task TEXT NOT NULL,
             completed BOOLEAN NOT NULL DEFAULT 0,
             position INTEGER NOT NULL UNIQUE
@@ -18,6 +18,24 @@ async function createTable() {
     console.log("can not create table:", err);
   }
 }
+
+// async function createTable() {
+//   const db = await getDBConnection();
+
+//   await db.exec(`
+//             CREATE TABLE users (
+//             id INTEGER PRIMARY KEY AUTOINCREMENT,
+//             name TEXT,
+//             email TEXT UNIQUE NOT NULL,
+//             username TEXT UNIQUE NOT NULL,
+//             password TEXT NOT NULL,
+//             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+//             );
+//       `);
+
+//   await db.close();
+//   console.log("table created");
+// }
 
 // async function seedTable() {
 //   const db = await getDBConnection();

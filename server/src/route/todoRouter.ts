@@ -6,7 +6,7 @@ import {
   deleteCompTasks,
   changeCompStatus,
   updateOrder,
-} from "../controller/TodoController.js";
+} from "../controller/TodoController";
 
 export const todoRouter = express.Router();
 

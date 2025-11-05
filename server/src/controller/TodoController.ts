@@ -1,15 +1,15 @@
-import { getDBConnection } from "../db.js";
-
+import { Request, Response } from "express";
+import { getDBConnection } from "../db";
 // ---- get all todo -----
 
-export async function getAllTodos(req, res) {
+export async function getAllTodos(res: Response) {
   try {
     const db = await getDBConnection();
 
     const todos = await db.all(`SELECT * FROM todos ORDER BY position`);
 
     res.json(todos);
-  } catch (error) {
+  } catch (err:Error | any) {
     res
       .status(500)
       .json({ error: "Failed to fetch genres", details: err.message });
@@ -18,7 +18,7 @@ export async function getAllTodos(req, res) {
 
 // ---- add new task -----
 
-export async function addTodo(req, res) {
+export async function addTodo(req: Request, res: Response) {
   const { task, completed, position } = req.body;
   try {
     const db = await getDBConnection();
@@ -41,7 +41,7 @@ export async function addTodo(req, res) {
 
 // ---- delete one task -----
 
-export async function deleteTask(req, res) {
+export async function deleteTask(req: Request, res: Response) {
   const { id } = req.params;
   try {
     const db = await getDBConnection();
@@ -55,7 +55,7 @@ export async function deleteTask(req, res) {
 
 // ---- delete all completed tasks -----
 
-export async function deleteCompTasks(req, res) {
+export async function deleteCompTasks(res: Response) {
   try {
     const db = await getDBConnection();
 
@@ -68,7 +68,7 @@ export async function deleteCompTasks(req, res) {
 
 // ---- check and uncheck task status -----
 
-export async function changeCompStatus(req, res) {
+export async function changeCompStatus(req: Request, res: Response) {
   const { id } = req.params;
   const { completed } = req.body;
   try {
@@ -87,13 +87,21 @@ export async function changeCompStatus(req, res) {
 
 // ---- update task position -----
 
-export async function updateOrder(req, res) {
-  const todo = req.body; 
-
+export async function updateOrder(req: Request, res: Response) {
+  const todo = req.body;
+  let db;
   try {
-    const db = await getDBConnection();
-
+    db = await getDBConnection();
     await db.run("BEGIN TRANSACTION");
+
+    // Step 1: Temporarily offset positions to avoid conflicts
+    for (const { id } of todo) {
+      await db.run(`UPDATE todos SET position = position + 1000 WHERE id = ?`, [
+        id,
+      ]);
+    }
+
+    // Step 2: Apply the correct new positions
     for (const { id, position } of todo) {
       await db.run(`UPDATE todos SET position = ? WHERE id = ?`, [
         position,
@@ -102,10 +110,10 @@ export async function updateOrder(req, res) {
     }
 
     await db.exec("COMMIT");
-    res.status(200).json("updated task postions");
+    res.status(200).json({ message: "Updated task positions successfully" });
   } catch (err) {
     console.error("Error reordering todos:", err);
-    if (db) await db.run("ROLLBACK"); // Roll back changes if something fails
+    if (db) await db.run("ROLLBACK");
     res.status(500).json({ error: "Database reorder failed" });
   }
 }

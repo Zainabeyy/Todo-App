@@ -4,13 +4,20 @@
   "description": "backend for todo app",
   "license": "ISC",
   "author": "zainab azeem",
-  "type": "module",
-  "main": "server.js",
+  "type": "commonjs",
+  "main": "./src/index.ts",
   "scripts": {
-    "start:dev": "nodemon server.js"
+    "dev": "nodemon src/index.ts",
+    "start":"nodemon dist/index.js",
+    "build": "npx tsc"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.10.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "cors": "^2.8.5",
