@@ -47,7 +47,7 @@ export default function Home() {
   return (
     <div className="px-6 py-12 max-w-2xl m-auto">
       <form onSubmit={submitTodoList} className="mt-8 mb-4 w-full">
-        <div className="todolistBox rounded-md equalShadow">
+        <div className="todolistBox border-b-0 rounded-md equalShadow">
           <label htmlFor="todo" className="circle"></label>
           <textarea
             ref={textareaRef}
@@ -57,7 +57,7 @@ export default function Home() {
             onChange={(e) => updateTodo(e)}
             onKeyDown={handleKeyDown}
             rows={1}
-            className="scroll-none focus:outline-none w-full caret-emerald-700 dark:caret-emerald-950 resize-none dark:bg-green-light"
+            className="scroll-none focus:outline-none w-full caret-emerald-700 dark:caret-slate-950 resize-none bg-transparent"
             placeholder="Create a new todo..."
           ></textarea>
         </div>
@@ -65,7 +65,7 @@ export default function Home() {
 
       <TodoList />
 
-      <p className="text-[0.8rem] text-slate-500 text-center mt-3 md:text-lg dark:text-white-000">
+      <p className="text-[0.8rem] text-slate-500 text-center mt-3 md:text-lg dark:text-white">
         Drag and drop to reorder list using
         <img
           src="../drag_indicator.svg"

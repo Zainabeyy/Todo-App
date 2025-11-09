@@ -8,14 +8,11 @@ export default {
     },
     extend: {
       colors: {
-        white: {
-          '000':'#fff',
-          100: "hsl(0, 0%, 98%)",
-        },
+        white100: "hsl(0, 0%, 98%)",
         green: {
           dark: "#141819",
-          light:"#1a422f",
-          lighter:'#cdcdcd'
+          light: "#1a422f",
+          lighter: "#cdcdcd",
         },
       },
       fontSize: {

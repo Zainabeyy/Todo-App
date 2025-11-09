@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { getDBConnection } from "../db";
 // ---- get all todo -----
 
-export async function getAllTodos(res: Response) {
+export async function getAllTodos(req: Request,res: Response) {
   try {
     const db = await getDBConnection();
 
